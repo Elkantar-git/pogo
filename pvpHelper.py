@@ -39,7 +39,6 @@ pokemon3 = argv[3]
 with open('pokemon.yaml') as f:
     
     data = yaml.load(f, Loader=yaml.FullLoader)
-    # print(data)
 
 
 # Fonctions
