@@ -1,7 +1,3 @@
-# Detect the element of ennemy and show you the better Pokémon
-# 
-#  
-
 from sys import argv
 import numpy as np
 import yaml
@@ -10,9 +6,6 @@ import yaml
 pokemon_types = ["Normal", "Fire", "Water", "Electric", "Grass", "Ice",
                  "Fighting", "Poison", "Ground", "Flying", "Psychic",
                  "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"]
-
-
-# A 2 Dimenstional Numpy Array Of Damage Multipliers For Attacking Pokemon:
     
 damage_array = np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1/2, 0, 1, 1, 1/2, 1],
                     [1, 1/2, 1/2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 1/2, 1, 1/2, 1, 2, 1],
@@ -32,8 +25,6 @@ damage_array = np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1/2, 0, 1, 1, 1/2,
                     [1, 1, 1, 1, 1, 1, 1/2, 1, 1, 1, 2, 1, 1, 2, 1, 1/2, 1, 1/2],
                     [1, 1/2, 1/2, 1/2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1/2, 2],
                     [1, 1/2, 1, 1, 1, 1, 2, 1/2, 1, 1, 1, 1, 1, 1, 2, 2, 1/2, 1]])
-
-
 
 # attType = argv[1]
 # defType = argv[2]
@@ -130,8 +121,11 @@ def weakless(pokemon):
         compter += 1
 
     print("{} is weak to :".format(pokemon))
+    print()
     print(weak)
+    print()
     print("{} is strong to :".format(pokemon))
+    print()
     print(strong)
 
 
