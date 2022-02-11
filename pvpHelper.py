@@ -1,7 +1,11 @@
+# Imports
+
 from sys import argv
 import numpy as np
 import yaml
 
+
+# Variables
 
 pokemon_types = ["Normal", "Fire", "Water", "Electric", "Grass", "Ice",
                  "Fighting", "Poison", "Ground", "Flying", "Psychic",
@@ -26,14 +30,19 @@ damage_array = np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1/2, 0, 1, 1, 1/2,
                     [1, 1/2, 1/2, 1/2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1/2, 2],
                     [1, 1/2, 1, 1, 1, 1, 2, 1/2, 1, 1, 1, 1, 1, 1, 2, 2, 1/2, 1]])
 
-# attType = argv[1]
-# defType = argv[2]
-# doubleType = argv[3]
 pokemon1 = argv[1]
 pokemon2 = argv[2]
 pokemon3 = argv[3]
 
-# print(attType, defType, doubleType)
+# Open Yaml File
+
+with open('pokemon.yaml') as f:
+    
+    data = yaml.load(f, Loader=yaml.FullLoader)
+    # print(data)
+
+
+# Fonctions
 
 def effective(attType, defType, doubleType):
     if doubleType == None:
@@ -85,26 +94,6 @@ def effective(attType, defType, doubleType):
                 # print("This attack is : x4 Super super effective")
     return multi
 
-
-# effective(attType, defType, doubleType)
-
-
-# Open Yaml File
-
-with open('pokemon.yaml') as f:
-    
-    data = yaml.load(f, Loader=yaml.FullLoader)
-    # print(data)
-
-# print(data['Mewtwo'][0])
-# print(data['Mewtwo'][1])
-
-
-# Is weak as : / is strong as :
-
-# ind = pokemon_types.index(data['Mewtwo'][0])
-
-
 def weakless(pokemon):
     weak = []
     strong = []
@@ -120,18 +109,17 @@ def weakless(pokemon):
             strong.append(pokemon_types[compter])
         compter += 1
 
-    print("{} is weak to :".format(pokemon))
-    print()
+    print("=======================================================")
+    print("{}".format(pokemon))
+    print("         Weak to :")
     print(weak)
     print()
-    print("{} is strong to :".format(pokemon))
-    print()
+    print("         Strong to :")
     print(strong)
 
 
-print("=======================================================")
+# Code
+
 weakless(pokemon1)
-print("=======================================================")
 weakless(pokemon2)
-print("=======================================================")
 weakless(pokemon3)
