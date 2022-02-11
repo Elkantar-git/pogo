@@ -37,7 +37,6 @@ pokemon3 = argv[3]
 # Open Yaml File
 
 with open('pokemon.yaml') as f:
-    
     data = yaml.load(f, Loader=yaml.FullLoader)
 
 
@@ -47,7 +46,6 @@ def effective(attType, defType, doubleType):
     if doubleType == None:
         attInd = pokemon_types.index(attType)
         defInd = pokemon_types.index(defType)
-
 
         if damage_array[attInd][defInd] == 0:
             multi = 0
@@ -98,10 +96,7 @@ def weakless(pokemon):
     strong = []
     compter = 0
     for x in damage_array:
-        # print(pokemon_types[compter], x[ind])
-        # print(pokemon_types[compter])
         multi = effective(pokemon_types[compter], data[pokemon][0], data[pokemon][1])
-        # print(multi)
         if multi > 1:
             weak.append(pokemon_types[compter])
         elif multi < 1:
