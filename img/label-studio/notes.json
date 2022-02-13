@@ -1,0 +1,17 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "name": "PokeStop"
+    },
+    {
+      "id": 1,
+      "name": "Pokemon"
+    }
+  ],
+  "info": {
+    "year": 2022,
+    "version": "1.0",
+    "contributor": "Label Studio"
+  }
+}
