@@ -1,66 +1,35 @@
 import numpy as np
 import cv2
-# from google.colab.patches import cv2_imshow
-import cv2 as cv
 
 ROOT_COLAB = '.'
 YOLO_CONFIG = ROOT_COLAB + '/yolo_env/'
 COCO_LABELS_FILE = YOLO_CONFIG + 'piford.names'
 YOLO_CONFIG_FILE = YOLO_CONFIG + 'yolov4-custom.cfg'
 YOLO_WEIGHTS_FILE = YOLO_CONFIG + 'yolov4-custom_best.weights'
-IMAGE_FILE = 'img/Dataset/frame21.jpg'
-# IMAGE = cv2.imread(ROOT_COLAB + '/' + IMAGE_FILE)
+IMAGE_FILE = 'img/Dataset/frame23.jpg'
 IMAGE = cv2.imread(ROOT_COLAB + '/' + IMAGE_FILE, cv2.IMREAD_UNCHANGED)
 CONFIDENCE_MIN = 0.5
 
 
-
-
-
-
- 
-# img = cv2.imread('/home/img/python.png', cv2.IMREAD_UNCHANGED)
- 
-# print('Original Dimensions : ',IMAGE.shape)
- 
-# scale_percent = 50 # percent of original size
-# width = int(IMAGE.shape[1] * scale_percent / 100)
-# height = int(IMAGE.shape[0] * scale_percent / 100)
-# dim = (width, height)
-  
-# resize image
-# resized = cv2.resize(IMAGE, dim, interpolation = cv2.INTER_AREA)
- 
-# print('Resized Dimensions : ',resized.shape)
- 
-
-# while True:
-#     cv2.imshow("Resized image", resized)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
-
-
-# IMAGE = cv2.resize(IMAGE, dim, interpolation = cv2.INTER_AREA)
-
-
+# Take labels
 
 with open(COCO_LABELS_FILE, 'rt') as f:
     labels = f.read().rstrip('\n').split('\n')
 
 
+# COLORS
+
 np.random.seed(45)
 BOX_COLORS = np.random.randint(0, 255, size=(len(labels), 3), dtype="uint8")
 
 
-
-
+# Init network
 
 yolo = cv2.dnn.readNetFromDarknet(YOLO_CONFIG_FILE, YOLO_WEIGHTS_FILE)
 
 yolo.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 
 yololayers = [yolo.getLayerNames()[i - 1] for i in yolo.getUnconnectedOutLayers()]
-
 
 (H, W) = IMAGE.shape[:2]
 
@@ -71,8 +40,7 @@ yolo.setInput(blobimage)
 layerOutputs = yolo.forward(yololayers)
 
 
-
-
+# Postprocessing
 
 boxes_detected = []
 confidences_scores = []
