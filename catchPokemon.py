@@ -7,7 +7,7 @@ import PIL
 LABELS_FILE = 'pogo/yolo_env/piford.names'
 CONFIG_FILE = 'pogo/yolo_env/yolov4-custom.cfg'
 WEIGHTS_FILE = 'pogo/yolo_env/yolov4-custom_best.weights'
-CONFIDENCE_MIN = 0.8
+CONFIDENCE_MIN = 0.5
 POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
@@ -88,7 +88,7 @@ while True:
             image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
             x, y = yoloxy(image, yolo, yololayers)
             break
-        except:
+        except TypeError:
             continue
 
         
