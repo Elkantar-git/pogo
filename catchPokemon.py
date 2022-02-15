@@ -7,7 +7,7 @@ import PIL
 LABELS_FILE = 'pogo/yolo_env/piford.names'
 CONFIG_FILE = 'pogo/yolo_env/yolov4-custom.cfg'
 WEIGHTS_FILE = 'pogo/yolo_env/yolov4-custom_best.weights'
-CONFIDENCE_MIN = 0.5
+CONFIDENCE_MIN = 0.8
 POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
