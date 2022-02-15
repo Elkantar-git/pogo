@@ -7,7 +7,7 @@ import PIL
 LABELS_FILE = 'pogo/yolo_env/piford.names'
 CONFIG_FILE = 'pogo/yolo_env/yolov4-custom.cfg'
 WEIGHTS_FILE = 'pogo/yolo_env/yolov4-custom_best.weights'
-CONFIDENCE_MIN = 0.5
+CONFIDENCE_MIN = 0.8
 POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
@@ -56,14 +56,15 @@ def yoloxy(image, yolo, yololayers):
                 labels_detected.append(classID)
                 print(boxes_detected)
                 print(confidences_scores)
+
                 return centerX, centerY
 
 def catchPokemon():
 
-    time.sleep(3)
-    while pyautogui.pixelMatchesColor(1800, 1580, (215, 48, 27), tolerance=10) == True:
+    time.sleep(5)
+    while pyautogui.pixelMatchesColor(1800, 1580, (215, 48, 27), tolerance=50) == True:
         pyautogui.moveTo(725, 825)
-        pyautogui.dragTo(725, 600, 0.15, button='left')
+        pyautogui.dragTo(725, 600, 0.2, button='left')
         time.sleep(5)
         print('ok')
     # img = pyautogui.screenshot(region=(1800, 1580, 1, 1))
@@ -78,12 +79,19 @@ def catchPokemon():
 while True:
     print('============START============')
 
-    img = pyautogui.screenshot(region=(964, 800, 950, 750))  # Full Screen = 964, 170, 950, 1628
-    image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
 
     # cv2.imshow("img", image)
 
-    x, y = yoloxy(image, yolo, yololayers)
+    while True:
+        try:
+            img = pyautogui.screenshot(region=(964, 800, 950, 750))  # Full Screen = 964, 170, 950, 1628
+            image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+            x, y = yoloxy(image, yolo, yololayers)
+            break
+        except:
+            continue
+
+        
     print(x, y)
 
     pyautogui.moveTo(x/2 + 482, y/2 + 400)
