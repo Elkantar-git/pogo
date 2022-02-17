@@ -1,3 +1,5 @@
+from audioop import cross
+from mimetypes import init
 import numpy as np
 import cv2
 import pyautogui
@@ -11,12 +13,11 @@ CONFIDENCE_MIN = 0.5
 POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
-
-yolo = cv2.dnn.readNetFromDarknet(CONFIG_FILE, WEIGHTS_FILE)
-
-yolo.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-
-yololayers = [yolo.getLayerNames()[i - 1] for i in yolo.getUnconnectedOutLayers()]
+def initYolo():
+    yolo = cv2.dnn.readNetFromDarknet(CONFIG_FILE, WEIGHTS_FILE)
+    yolo.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+    yololayers = [yolo.getLayerNames()[i - 1] for i in yolo.getUnconnectedOutLayers()]
+    return yolo, yololayers
 
 
 def yoloxy(image, yolo, yololayers):
@@ -25,9 +26,7 @@ def yoloxy(image, yolo, yololayers):
     yolo.setInput(blobimage)
     layerOutputs = yolo.forward(yololayers)
 
-
     # Postprocessing
-
     boxes_detected = []
     confidences_scores = []
     labels_detected = []
@@ -54,35 +53,13 @@ def yoloxy(image, yolo, yololayers):
                 boxes_detected.append([x, y, int(width), int(height)])
                 confidences_scores.append(float(confidence))
                 labels_detected.append(classID)
-                print(boxes_detected)
-                print(confidences_scores)
+                # print(boxes_detected)
+                print(f'Locate Pokemon with an accuracy of : {confidences_scores}')
 
                 return centerX, centerY
 
-def catchPokemon():
 
-    pyautogui.click(x/2 + 482, y/2 + 400)
-    time.sleep(5)
-    while pyautogui.pixelMatchesColor(1800, 1580, (215, 48, 27), tolerance=50) == True:
-        pyautogui.moveTo(725, 825)
-        pyautogui.dragTo(725, 600, 0.2, button='left')
-        time.sleep(5)
-        print('ok')
-    # img = pyautogui.screenshot(region=(1800, 1580, 1, 1))
-    # px = img.getpixel((0, 0))
-    # p = pyautogui.pixelMatchesColor(1800, 1580, (215, 48, 27), tolerance=10)
-    # print(px)
-    # print(p)
-
-
-# 900, 790
-
-while True:
-    print('============START============')
-
-
-    # cv2.imshow("img", image)
-
+def yoloSearchPokemon(yolo, yololayers):
     while True:
         try:
             img = pyautogui.screenshot(region=(964, 800, 950, 750))  # Full Screen = 964, 170, 950, 1628
@@ -91,13 +68,99 @@ while True:
             break
         except TypeError:
             continue
+    return x, y
 
+
+def catchPokemonOrQuit(x, y):
+    poke = None
+    stop = None
+    arena = None
+    rocket = None
+    rocket_battle = None
+    catch = None
+    onMap = None
+    compteur = 0
+
+    # Click on it
+    pyautogui.click(x/2 + 482, y/2 + 400)
+    time.sleep(2)
+
+    # Verify the page
+    while poke or stop or arena or rocket or rocket_battle or onMap == None:
+        poke = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8)
+        # Catch pokemon
+        if poke != None:
+            while pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8) != None:
+                pyautogui.moveTo(725, 825)
+                pyautogui.dragTo(725, 600, 0.2, button='left')
+                while catch or onMap == None:
+                    catch = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8)
+                    onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
+                    if catch != None:
+                        compteur += 1
+                        print('Pokemon: NOPE... try again !')
+                        catch = None
+                        break
+                    elif onMap != None:
+                        compteur += 1
+                        print(f'Pokemon {compteur} Shot Catch')
+                        onMap = None
+                        break
+            break
+
+        onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
+        if onMap != None:
+            print('Click on Map')
+            break
+
+        stop = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=True, confidence=.8, region=(1400, 1600, 100, 100))
+            # Quit pokestop
+        if stop != None:
+            stopxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=True, confidence=.8, region=(1400, 1600, 100, 100))
+            pyautogui.click(stopxy[0]/2, stopxy[1]/2)
+            print('Quit PokeStop')
+            break
+
+        arena = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=True, confidence=.8)
+        # Quit arena
+        if arena != None:
+            arenaxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=True, confidence=.8)
+            pyautogui.click(arenaxy[0]/2, arenaxy[1]/2)
+            print('Quit Arena')
+            break
+
+        rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8)
+        rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=True, confidence=.8)
+
+
+    # # Quit rocket
+    # elif rocket == True:
+    #     print('Quit Rocket')
+
+    # # Quit rocket battle
+    # elif rocket_battle == True:
+    #     print('Quit Rocket')
+    
+
+
+
+# 900, 790
+
+
+
+
+    # MAIN
+
+yolo, yololayers = initYolo()
+
+while True:
+    print('============START============')
+
+    x, y = yoloSearchPokemon(yolo, yololayers)
         
-    print(x, y)
+    print(f'On x, y : {x} {y}')
 
-
-
-    catchPokemon()
+    catchPokemonOrQuit(x, y)
 
 
     
