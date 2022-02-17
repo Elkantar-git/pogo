@@ -7,7 +7,7 @@ import PIL
 LABELS_FILE = 'pogo/yolo_env/piford.names'
 CONFIG_FILE = 'pogo/yolo_env/yolov4-custom.cfg'
 WEIGHTS_FILE = 'pogo/yolo_env/yolov4-custom_best.weights'
-CONFIDENCE_MIN = 0.8
+CONFIDENCE_MIN = 0.5
 POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
@@ -61,6 +61,7 @@ def yoloxy(image, yolo, yololayers):
 
 def catchPokemon():
 
+    pyautogui.click(x/2 + 482, y/2 + 400)
     time.sleep(5)
     while pyautogui.pixelMatchesColor(1800, 1580, (215, 48, 27), tolerance=50) == True:
         pyautogui.moveTo(725, 825)
@@ -94,8 +95,7 @@ while True:
         
     print(x, y)
 
-    pyautogui.moveTo(x/2 + 482, y/2 + 400)
-    pyautogui.click()
+
 
     catchPokemon()
 
