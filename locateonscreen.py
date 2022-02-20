@@ -88,11 +88,11 @@ def clear_items():
 
 
 
-# clear_items()
+clear_items()
 
 
 
-locateOnScreen('cross')
+# locateOnScreen('cross')
 
 
 

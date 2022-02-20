@@ -21,7 +21,6 @@ def initYolo():
 
 
 def yoloxy(image, yolo, yololayers):
-    (H, W) = image.shape[:2]
     blobimage = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     yolo.setInput(blobimage)
     layerOutputs = yolo.forward(yololayers)
@@ -30,6 +29,7 @@ def yoloxy(image, yolo, yololayers):
     boxes_detected = []
     confidences_scores = []
     labels_detected = []
+    (H, W) = image.shape[:2]
     # loop over each of the layer outputs
     for output in layerOutputs:
     # loop over each of the detections
@@ -57,7 +57,8 @@ def yoloxy(image, yolo, yololayers):
                 # accuracy = sorted(confidences_scores)
                 # print(confidences_scores)
                 # print(accuracy)
-                print(f'Locate position in [{centerX}, {centerY}] with an accuracy of : {confidence} %')
+                acc = confidence * 100
+                print(f'Locate position in [{centerX}, {centerY}] with an accuracy of : {acc} %')
 
                 return centerX, centerY
 
@@ -86,19 +87,20 @@ def catchPokemonOrQuit(x, y):
 
     # Click on it
     pyautogui.click(x/2 + 482, y/2 + 400)
-    time.sleep(2)
+    # time.sleep(1)
 
     # Verify the page
     while poke or stop or arena or rocket or rocket_battle or onMap == None:
-        poke = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8)
+        poke = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8, region=(1750, 1500, 150, 150))
         # Catch pokemon
         if poke != None:
             print('Catching Pokemon...')
-            while pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8) != None:
+            while pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8, region=(1750, 1500, 150, 150)) != None:
                 pyautogui.moveTo(725, 825)
                 pyautogui.dragTo(725, 600, 0.2, button='left')
+                time.sleep(1)
                 while catch or onMap == None:
-                    catch = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8)
+                    catch = pyautogui.locateCenterOnScreen('pogo/locate_img/ball.jpg', grayscale=True, confidence=.8, region=(1750, 1500, 150, 150))
                     onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
                     if catch != None:
                         compteur += 1
@@ -112,28 +114,32 @@ def catchPokemonOrQuit(x, y):
                         break
             break
 
-        onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
+        onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=False, confidence=.8, region=(1380, 1600, 130, 130))
         if onMap != None:
             print('ERROR_YOLO: This is the Map')
             break
 
-        stop = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=True, confidence=.8, region=(1400, 1600, 100, 100))
+        stop = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=False, confidence=.8, region=(1400, 1600, 100, 100))
             # Quit pokestop
         if stop != None:
             print('PokeStop Detected')
-            stopxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=True, confidence=.8, region=(1400, 1600, 100, 100))
+            stopxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_menu.jpg', grayscale=False, confidence=.8, region=(1400, 1600, 100, 100))
             pyautogui.click(stopxy[0]/2, stopxy[1]/2)
             print('Quit PokeStop')
+            time.sleep(1)
 
             # Detect TeamRocket
-            rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140))
+            rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140))
             if rocket != None:
                 print('TeamRocket Detected')
                 pyautogui.click(rocket[0]/2, rocket[1]/2)
-                while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140)) != None:
+                while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140)) != None:
                     pyautogui.click(rocket[0]/2, rocket[1]/2)
                     time.sleep(1)
-                rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=True, confidence=.8)
+                    if pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110)) != None:
+                        break
+                    
+                rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110))
                 if rocket_battle != None:
                     pyautogui.click(rocket_battle[0]/2, rocket_battle[1]/2)
                     # To modify =>
@@ -145,12 +151,12 @@ def catchPokemonOrQuit(x, y):
                     pyautogui.click(720, 810)
                     time.sleep(2)
                     print('Catching Pokemon...')
-                    while pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=True, confidence=.8) != None:
+                    while pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8) != None:
                         pyautogui.moveTo(725, 825)
                         pyautogui.dragTo(725, 600, 0.2, button='left')
                         while catch or onMap == None:
-                            catch = pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=True, confidence=.8)
-                            onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
+                            catch = pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8)
+                            onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=False, confidence=.8, region=(1380, 1600, 130, 130))
                             if catch != None:
                                 compteur += 1
                                 print('Pokemon: NOPE... try again !')
@@ -167,23 +173,25 @@ def catchPokemonOrQuit(x, y):
                 
             break
 
-        arena = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=True, confidence=.8)
+        arena = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=False, confidence=.8, region=(1380, 1620, 150, 150))
         # Quit arena
         if arena != None:
             print('Arena Detected')
-            arenaxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=True, confidence=.8)
+            arenaxy = pyautogui.locateCenterOnScreen('pogo/locate_img/cross_arena.jpg', grayscale=False, confidence=.8, region=(1380, 1620, 150, 150))
             pyautogui.click(arenaxy[0]/2, arenaxy[1]/2)
             print('Quit Arena')
             break
 
-        rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140))
+        rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140))
         if rocket != None:
             print('TeamRocket Detected')
             pyautogui.click(rocket[0]/2, rocket[1]/2)
-            while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140)) != None:
+            while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140)) != None:
                 pyautogui.click(rocket[0]/2, rocket[1]/2)
                 time.sleep(1)
-            rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=True, confidence=.8)
+                if pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110)) != None:
+                    break
+            rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110))
             if rocket_battle != None:
                 pyautogui.click(rocket_battle[0]/2, rocket_battle[1]/2)
                 # To modify =>
@@ -194,13 +202,15 @@ def catchPokemonOrQuit(x, y):
                 time.sleep(5)
                 pyautogui.click(720, 810)
                 time.sleep(2)
+                pyautogui.click(720, 810)
+                time.sleep(2)
                 print('Catching Pokemon...')
-                while pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=True, confidence=.8) != None:
+                while pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8) != None:
                     pyautogui.moveTo(725, 825)
                     pyautogui.dragTo(725, 600, 0.2, button='left')
                     while catch or onMap == None:
-                        catch = pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=True, confidence=.8)
-                        onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=True, confidence=.8, region=(1380, 1600, 130, 130))
+                        catch = pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8)
+                        onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=False, confidence=.8, region=(1380, 1600, 130, 130))
                         if catch != None:
                             compteur += 1
                             print('Pokemon: NOPE... try again !')
@@ -218,8 +228,41 @@ def catchPokemonOrQuit(x, y):
                 print('Quit Rocket')
                 break
 
-        rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=True, confidence=.8)
-
+        # rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=True, confidence=.8)
+        rocket_battle = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110))
+        if rocket_battle != None:
+            pyautogui.click(rocket_battle[0]/2, rocket_battle[1]/2)
+            # To modify =>
+            time.sleep(2)
+            pyautogui.click(720, 810)
+            time.sleep(10)
+            pyautogui.click(720, 810)
+            time.sleep(5)
+            pyautogui.click(720, 810)
+            time.sleep(2)
+            print('Catching Pokemon...')
+            while pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8) != None:
+                pyautogui.moveTo(725, 825)
+                pyautogui.dragTo(725, 600, 0.2, button='left')
+                while catch or onMap == None:
+                    catch = pyautogui.locateCenterOnScreen('pogo/locate_img/berry.jpg', grayscale=False, confidence=.8)
+                    onMap = pyautogui.locateCenterOnScreen('pogo/locate_img/menu.jpg', grayscale=False, confidence=.8, region=(1380, 1600, 130, 130))
+                    if catch != None:
+                        compteur += 1
+                        print('Pokemon: NOPE... try again !')
+                        catch = None
+                        break
+                    elif onMap != None:
+                        compteur += 1
+                        print(f'Shadow Pokemon {compteur} Shot Catch')
+                        onMap = None
+                        break
+            break
+        # else:
+        #     # To modify =>
+        #     pyautogui.click(720, 840)
+        #     print('Quit Rocket')
+        #     break
 
     # # Quit rocket
     # elif rocket == True:
