@@ -16,48 +16,15 @@ POKE_BUTTON = 'pogo/img/ui_pokeball_button.png'
 
 # Init network
 def initYolo():
-    # Model
+        # Model
     model = torch.hub.load('/Users/elkantar/projects/yolov5', 'custom', path='/Users/elkantar/projects/Pogo-Bot/pogo/best.pt', source='local')
     return model
-
-
-def results(image, model):
-    # Inference
-    results = model(image)
-    results.print()
-    # results.show()
-
-    # Extract sorted results
-    findPokemon = 0
-    results = results.pandas().xyxy[0].sort_values(by=['class', 'confidence'], ascending=False).to_dict(orient="records")
-    for result in results:
-        # Filter labels and confidence
-        if result['class'] == 1: # and result['confidence'] > CONF_MIN:
-            findPokemon += 1
-            con = result['confidence']
-            cs = result['class']
-            x1 = int(result['xmin'])
-            y1 = int(result['ymin'])
-            x2 = int(result['xmax'])
-            y2 = int(result['ymax'])
-            centerX = x1 + ((x2 - x1)/2) 
-            centerY = y1 + ((y2 - y1)/2)
-            posX = (centerX + 1024)/2
-            posY = (centerY + 684)/2
-            acc = con * 100
-
-
-            # print(cs, con, x1, y1, xcenter, ycenter, xpos, ypos)
-            print(f'Locate position in [{posX}, {posY}] with an accuracy of : {acc} %')
-            return posX, posY
-
-    print(f"====== Yolo find {findPokemon} Pokémon ======")
 
 
 def yoloSearchPokemon(model):
     while True:
         try:
-            # Image
+                # Image
             img = ImageGrab.grab(bbox =(1024, 664, 1856, 1496))  # take a screenshot bbox=(xmin, ymin, xmax, ymax)
             imgGREY = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
             x, y = results(imgGREY, model)
@@ -65,6 +32,35 @@ def yoloSearchPokemon(model):
         except TypeError:
             continue
     return x, y
+
+
+def results(image, model):
+        # Inference
+    results = model(image)
+    results.print()
+    # results.show()
+
+        # Extract results
+    results = results.pandas().xyxy[0].sort_values(by=['class', 'confidence'], ascending=False).to_dict(orient="records")
+    for result in results:
+            # Filter labels and confidence
+        if result['class'] == 1: # and result['confidence'] > CONF_MIN:
+            # cs = result['class']
+            con = result['confidence']
+            x1 = int(result['xmin'])
+            y1 = int(result['ymin'])
+            x2 = int(result['xmax'])
+            y2 = int(result['ymax'])
+                # Out center
+            centerX = x1 + ((x2 - x1)/2) 
+            centerY = y1 + ((y2 - y1)/2)
+                # Position on screen
+            posX = (centerX + 1024)/2
+            posY = (centerY + 684)/2
+            acc = con * 100
+            # print(cs, con, x1, y1, xcenter, ycenter, xpos, ypos)
+            print(f'Locate position in [{posX}, {posY}] with an accuracy of : {acc} %')
+            return posX, posY
 
 
 def catchPokemonOrQuit(x, y):
@@ -174,11 +170,11 @@ def catchPokemonOrQuit(x, y):
             print('Quit Arena')
             break
 
-        rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140))
+        rocket = pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140))
         if rocket != None:
             print('TeamRocket Detected')
             pyautogui.click(rocket[0]/2, rocket[1]/2)
-            while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=False, confidence=.8, region=(960, 1500, 100, 140)) != None:
+            while pyautogui.locateCenterOnScreen('pogo/locate_img/rocket.jpg', grayscale=True, confidence=.8, region=(960, 1500, 100, 140)) != None:
                 pyautogui.click(rocket[0]/2, rocket[1]/2)
                 time.sleep(1)
                 if pyautogui.locateCenterOnScreen('pogo/locate_img/rocket_battle.jpg', grayscale=False, confidence=.8, region=(1240, 1370, 400, 110)) != None:
@@ -189,9 +185,10 @@ def catchPokemonOrQuit(x, y):
                 # To modify =>
                 time.sleep(2)
                 pyautogui.click(720, 810)
+
                 time.sleep(10)
                 pyautogui.click(720, 810)
-                time.sleep(5)
+                time.sleep(10)
                 pyautogui.click(720, 810)
                 time.sleep(2)
                 pyautogui.click(720, 810)
@@ -256,22 +253,6 @@ def catchPokemonOrQuit(x, y):
         #     print('Quit Rocket')
         #     break
 
-    # # Quit rocket
-    # elif rocket == True:
-    #     print('Quit Rocket')
-
-    # # Quit rocket battle
-    # elif rocket_battle == True:
-    #     print('Quit Rocket')
-    
-
-
-
-# 900, 790
-
-
-
-
     # MAIN
 
 model = initYolo()
@@ -283,7 +264,7 @@ while True:
 
     catchPokemonOrQuit(x, y)
 
-
+    time.sleep(2)
     
 
 
